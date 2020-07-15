@@ -38,12 +38,12 @@ namespace MassTransitAutoFac
 
             builder.RegisterType<CategoryCreatedEventConsumer>().As<IConsumer<CategoryCreatedEvent>>();
 
+            builder.RegisterType<SampleService>().As<ISampleService>();
+
             var assembly = typeof(CategoryCreatedEventConsumer).Assembly;
 
             builder.RegisterModule(new MassTransitModule(connectionString, assembly));
 
-            //builder.RegisterType<PublishEventService>().As<IPublishEventService>();
-            //builder.RegisterType<ReceiveEventService>().As<IReceiveEventService>();
             return builder.Build();
         }
     }
