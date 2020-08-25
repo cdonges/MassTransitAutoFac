@@ -20,7 +20,9 @@ namespace MassTransitAutoFac
             for (int i=0; i < 2; i++)
             {
                 var id = Guid.NewGuid();
-                await bus.Publish(new CategoryCreatedEvent() { Name = i.ToString(), MessageId = id, CorrelationId = Guid.Empty });
+                var message = new CategoryCreatedEvent() { Name = i.ToString(), MessageId = id, CorrelationId = Guid.NewGuid() };
+                Console.WriteLine($"Sending {message.CorrelationId}");
+                await bus.Publish(message);
             }
 
             await Task.Run(() => Console.Read());
