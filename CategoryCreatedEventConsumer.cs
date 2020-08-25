@@ -18,7 +18,7 @@ namespace MassTransitAutoFac
         public async Task Consume(ConsumeContext<CategoryCreatedEvent> context)
         {
             var x = this.sampleService.AddNumbers(1, 2);
-            await Console.Out.WriteLineAsync($"Category Received: {context.Message.Name}");
+            await Console.Out.WriteLineAsync($"Category Received: {context.Message.Name}, {context.CorrelationId}");
         }
     }
 }

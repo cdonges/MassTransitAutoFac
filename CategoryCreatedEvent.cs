@@ -1,8 +1,9 @@
 namespace MassTransitAutoFac
 {
     using System;
+    using MassTransit;
 
-    public class CategoryCreatedEvent
+    public class CategoryCreatedEvent : CorrelatedBy<Guid>
     {
         public CategoryCreatedEvent()
         {
@@ -11,5 +12,7 @@ namespace MassTransitAutoFac
         public string Name { get; set; }
 
         public Guid MessageId { get; set; }
+
+        public Guid CorrelationId { get; set; }
     }
 }
