@@ -48,6 +48,16 @@ namespace MassTransitAutoFac
                     cfg.ConfigureEndpoints(context);
                 });
             });
+
+            builder.AddMassTransit<IGlobalBus>(g =>
+            {
+                g.UsingAzureServiceBus((context, cfg) =>
+                {
+                    cfg.Host(this.massTransitConnectionString, h => { });
+
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
         }
     }
 }
