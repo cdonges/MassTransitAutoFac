@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MassTransitAutoFac
 {
@@ -11,9 +13,11 @@ namespace MassTransitAutoFac
         {
             var container = CreateContainer();
 
-            var bus = container.Resolve<IBusControl>();
+            var bus = container.Resolve<IBus>();
+            var globalBus = container.Resolve<IGlobalBus>();
+            var busControl = container.Resolve<IBusControl>();
 
-            bus.Start();
+            busControl.Start();
 
             Console.WriteLine("Start");
 
@@ -23,11 +27,12 @@ namespace MassTransitAutoFac
                 var message = new CategoryCreatedEvent() { Name = i.ToString(), MessageId = id, CorrelationId = Guid.NewGuid() };
                 Console.WriteLine($"Sending {message.CorrelationId}");
                 await bus.Publish(message);
+                await globalBus.Publish(message);
             }
 
             await Task.Run(() => Console.Read());
 
-            bus.Stop();
+            busControl.Stop();
 
             Console.WriteLine("Stop");
         }
@@ -35,16 +40,21 @@ namespace MassTransitAutoFac
         public static IContainer CreateContainer()
         {
             var connectionString = Environment.GetEnvironmentVariable("serviceBusTestConnection");
+            var connectionGlobalString = Environment.GetEnvironmentVariable("serviceBusGlobalTestConnection");
+
+            var serviceCollection = new ServiceCollection();
+
+            serviceCollection.AddValdMassTransit(connectionString, connectionGlobalString, "consoleTest", typeof(Program).Assembly);
 
             var builder = new ContainerBuilder();
+
+            builder.Populate(serviceCollection);
 
             builder.RegisterType<CategoryCreatedEventConsumer>().As<IConsumer<CategoryCreatedEvent>>();
 
             builder.RegisterType<SampleService>().As<ISampleService>();
 
             var assembly = typeof(CategoryCreatedEventConsumer).Assembly;
-
-            builder.RegisterModule(new MassTransitModule(connectionString, assembly));
 
             return builder.Build();
         }
