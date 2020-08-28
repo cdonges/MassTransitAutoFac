@@ -28,7 +28,7 @@ namespace MassTransitAutoFac
                     cfg.ReceiveEndpoint(apiName, ec =>
                     {
                         ec.ConfigureConsumers(context);
-                        ec.DiscardSkippedMessages();
+                        //ec.DiscardSkippedMessages();
                     });
                 });
             });
@@ -46,7 +46,7 @@ namespace MassTransitAutoFac
                         cfg.ReceiveEndpoint(apiName + "_global", ec =>
                         {
                             ec.ConfigureConsumers(context);
-                            ec.DiscardSkippedMessages();
+                            //ec.DiscardSkippedMessages();
                         });
                     });
                 });
